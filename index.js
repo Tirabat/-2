@@ -9,12 +9,12 @@ let bargainPatience = 3
 let roomPrice = 20
 let skipIntro = 0
 let runawayCount = 0
-let health = 120
+let health = 50
 let bossHealth = 800
 let bossAttack = 0
 let rounds = 0
 let deathAttempts = 0
-let chiefHealth = 0
+let chiefHealth = 26
 
 function rollD4() {
     return Math.floor(Math.random() * 4) + 1;
@@ -34,14 +34,96 @@ function shuffleArray(arr) {
     }
     return arr
 }
-function fightChief(){
-    if (chiefHealth > 0 && health >0){
+function rollD3() {
+    return Math.floor(Math.random() * 2) + 1;
+}
+function rollD6() {
+    return Math.floor(Math.random() * 6) + 1;
+}
+function fightChief() {
+    while (true) {
+        if (chiefHealth <= 0 || health <= 0) {
+            break
+        }
         alert(
-            `РАУНД №${rounds + 1}`
+            `РАУНД №${rounds + 1}\n` +
+            `Ваше HP: ${health}\n` +
+            `HP повара: ${chiefHealth}`
         )
         const a = +prompt(
-            'ВЫБОР ДЕЙСТВИЙ'
+            'ВЫБОР ДЕЙСТВИЙ\n' +
+            '1 - Атаковать.'
         )
+        if (a == 1) {
+            const playerRoll = rollD6()
+            let playerDamage = 0
+            if (playerRoll >= 2) {
+                playerDamage = playerRoll - 1
+            }
+            let critText = ''
+            if (playerRoll == 6) {
+                const critRoll = rollD4()
+                if (critRoll <= 3) {
+                    playerDamage += 4
+                    critText = `\nКРИТИЧЕСКИЙ УДАР! (d4: ${critRoll}) +4 урона.`
+                }
+                else {
+                    critText = `\nШанс на крит не сработал (d4: ${critRoll}).`
+                }
+            }
+            chiefHealth -= playerDamage
+            alert(
+                `Вы бросаете кубик: ${playerRoll}.\n` +
+                `Урон: ${playerDamage}.` +
+                critText + '\n' +
+                `HP повара: ${chiefHealth}`
+            )
+        }
+        else {
+            alert('Повар усмехается: "Долго думаешь. Ужин стынет."')
+            continue
+        }
+                const bossRoll = rollD3()
+        let bossDamage = 0
+        if (bossRoll == 1) {
+            bossDamage = 1
+        }
+        else if (bossRoll == 2) {
+            bossDamage = 2
+        }
+        else if (bossRoll == 3) {
+            bossDamage = 4
+        }
+        if (bossDamage == 0) {
+            alert('Повар замахивается... и промахивается!')
+        }
+        else {
+            health -= bossDamage
+            alert(
+                'УРОН\n' +
+                `Повар бьёт! Урон: ${bossDamage}.\n` +
+                `Ваше HP: ${health}`
+            )
+        }
+        if (health <= 0) {
+            break
+        }
+        rounds += 1
+    }
+    if (health <= 0) {
+        alert(
+            'ПОРАЖЕНИЕ\n' +
+            'Повар опускает тесак и смотрит на вас без злобы. Просто устало.\n' +
+            '— Ничего личного, гость. Просто ужин должен быть свежим.\n' +
+            'Последнее, что вы слышите, — как шипит котёл.'
+        )
+        dieCount += 1
+        return
+    }
+    if (chiefHealth <= 0) {
+        alert('ПОБЕДА\n' + '')
+        inventory.push('')
+        return
     }
 }
 function bossFight() {
@@ -67,7 +149,7 @@ alert(
 )
 alert(
     'НАЧАЛЬНЫЙ КАПИТАЛ\n' +
-    'Король выдал вам 100 монет, а также начальное снаряжение для стражников, деревянный меч (5 урона) и кожаную броню (1 ед. брони за каждый элемент, за полный комплект: +10 максимального очков жизней), а также корону, магический предмет для записи всего окружения со звуком (ничего не даёт и возвращается к прошлому владельцу после смерти нынешнего).'
+    'Король выдал вам 100 монет, а также начальное снаряжение для стражников, деревянный меч (5 урона) и кожаную броню (1 ед. брони за каждый элемент), а также корону, магический предмет для записи всего окружения со звуком (ничего не даёт и возвращается к прошлому владельцу после смерти нынешнего).'
 )
 balance += 100
 inventory.push('Деревянный меч')
@@ -1005,4 +1087,5 @@ while (true) {
         'Он поднимает тесак. Пар вокруг него расходится, будто отталкиваемый.\n' +
         'Повар: "Значит, ужин будет из тебя."'
     )
+    fightChief()
 }
