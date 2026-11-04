@@ -21,8 +21,17 @@ let gardenerHealth = 60
 let scientistHealth = 75
 let extraBossHealth = 0
 let negativeBalanceHappened = 0
-let boughtFromTrader = 0
-let lootRoll = 0
+let maxHealth = 50
+let equippedWeapon = 'Деревянный меч'
+let equippedHelmet = 'Кожаный шлем'
+let equippedChest = 'Кожаный нагрудник'
+let equippedLegs = 'Кожаные штаны'
+let equippedFeet = 'Кожаные сапоги'
+let equippedHands = null
+let bossBleedingStacks = 0
+let bossBleedingTurns = 0
+let bossStunnedTurns = 0
+let playerWoundStacks = 0
 
 function payMoney(amount) {
     balance -= amount
@@ -32,7 +41,97 @@ function payMoney(amount) {
 }
 
 function rollLoot() {
-    return Math.floor(Math.random() * 11) + 10;
+    return Math.floor(Math.random() * 11) + 10
+}
+
+function getPlayerArmor() {
+    let armor = 0
+    if (equippedHelmet == 'Кожаный шлем') armor += 1
+    if (equippedHelmet == 'Колпак повара') armor += 2
+    if (equippedHelmet == 'Каска машиниста') armor += 2
+    if (equippedHelmet == 'Медный шлем с проводами') armor += 2
+    if (equippedHelmet == 'Венок из шипов') armor += 1
+    if (equippedChest == 'Кожаный нагрудник') armor += 1
+    if (equippedChest == 'Фартук повара') armor += 2
+    if (equippedChest == 'Кожаный фартук машиниста') armor += 3
+    if (equippedChest == 'Доспех из коры') armor += 4
+    if (equippedChest == 'Резиновый халат') armor += 3
+    if (equippedLegs == 'Кожаные штаны') armor += 1
+    if (equippedFeet == 'Кожаные сапоги') armor += 1
+    if (equippedFeet == 'Ботинки машиниста') armor += 2
+    if (equippedHands == 'Рукавицы машиниста') armor += 2
+    return armor
+}
+
+function getPlayerRegen() {
+    let regen = 0
+    if (equippedHelmet == 'Колпак повара') regen += 2
+    if (equippedChest == 'Фартук повара') regen += 2
+    return regen
+}
+
+function getWeaponMax() {
+    if (equippedWeapon == 'Деревянный меч') return 5
+    if (equippedWeapon == 'Тяжёлый тесак') return 8
+    if (equippedWeapon == 'Разводной ключ') return 10
+    if (equippedWeapon == 'Секатор королевского садовника') return 6
+    if (equippedWeapon == 'Электрический жезл') return 9
+    if (equippedWeapon == 'Плеть надзирателя') return 6
+    if (equippedWeapon == 'Стальной меч') return 8
+    return 5
+}
+
+function weaponBleeds() { return equippedWeapon == 'Тяжёлый тесак' }
+function weaponStuns() { return equippedWeapon == 'Разводной ключ' }
+function weaponWounds() { return equippedWeapon == 'Плеть надзирателя' }
+function weaponPierces() { return equippedWeapon == 'Секатор королевского садовника' }
+
+function tryEquipArmor(item) {
+    const chestItems = ['Фартук повара', 'Кожаный фартук машиниста', 'Доспех из коры', 'Резиновый халат']
+    const helmetItems = ['Колпак повара', 'Каска машиниста', 'Медный шлем с проводами', 'Венок из шипов']
+    if (chestItems.indexOf(item) != -1) {
+        if (equippedChest != 'Кожаный нагрудник') {
+            const c = +prompt(`СМЕНА БРОНИ (торс)\nНадето: ${equippedChest}\nНовое: ${item}\n1 - Заменить\n2 - Оставить`)
+            if (c == 1) equippedChest = item
+        }
+        else equippedChest = item
+    }
+    else if (helmetItems.indexOf(item) != -1) {
+        if (equippedHelmet != 'Кожаный шлем') {
+            const c = +prompt(`СМЕНА БРОНИ (голова)\nНадето: ${equippedHelmet}\nНовое: ${item}\n1 - Заменить\n2 - Оставить`)
+            if (c == 1) equippedHelmet = item
+        }
+        else equippedHelmet = item
+    }
+    else if (item == 'Ботинки машиниста') {
+        if (equippedFeet != 'Кожаные сапоги') {
+            const c = +prompt(`СМЕНА БРОНИ (обувь)\nНадето: ${equippedFeet}\nНовое: ${item}\n1 - Заменить\n2 - Оставить`)
+            if (c == 1) equippedFeet = item
+        }
+        else equippedFeet = item
+    }
+    else if (item == 'Рукавицы машиниста') {
+        if (equippedHands != null) {
+            const c = +prompt(`СМЕНА БРОНИ (руки)\nНадето: ${equippedHands}\nНовое: ${item}\n1 - Заменить\n2 - Оставить`)
+            if (c == 1) equippedHands = item
+        }
+        else equippedHands = item
+    }
+}
+
+function tryEquipWeapon(item) {
+    if (item == 'Тяжёлый тесак' || item == 'Разводной ключ' || item == 'Секатор королевского садовника' || item == 'Электрический жезл' || item == 'Плеть надзирателя' || item == 'Стальной меч') {
+        if (equippedWeapon != 'Деревянный меч') {
+            const c = +prompt(`СМЕНА ОРУЖИЯ\nНадето: ${equippedWeapon}\nНовое: ${item}\n1 - Заменить\n2 - Оставить`)
+            if (c == 1) equippedWeapon = item
+        }
+        else equippedWeapon = item
+    }
+}
+
+function bossDies() {
+    maxHealth += 10
+    health = maxHealth
 }
 
 function rollD4() {
@@ -1156,36 +1255,36 @@ while (true) {
         break
     }
     alert(
-    'ГОСТИНАЯ «ПЛЮЩ И ПЫЛЬ»\n' +
-    'Плющ пророс сквозь стены. Мебель в пыли, но чайник на столе ещё тёплый. В углах - тени. Они не двигаются, но вы чувствуете их взгляд.\n' +
-    'Из-под пыли торчит край сундука. На камине - склянка с чем-то тёмным.'
-)
-const guestRoomChoice = +prompt(
-    'ВЫБОР\n' +
-    '1 - Обыскать сундук.\n' +
-    '2 - Взять склянку с камина.\n' +
-    '3 - Пройти мимо.'
-)
-if (guestRoomChoice == 1) {
-    const guestLoot = rollLoot()
-    balance += guestLoot
-    alert(
-        'СУНДУК\n' +
-        `Внутри ${guestLoot} монет и старая пуговица.`
+        'ГОСТИНАЯ «ПЛЮЩ И ПЫЛЬ»\n' +
+        'Плющ пророс сквозь стены. Мебель в пыли, но чайник на столе ещё тёплый. В углах - тени. Они не двигаются, но вы чувствуете их взгляд.\n' +
+        'Из-под пыли торчит край сундука. На камине - склянка с чем-то тёмным.'
     )
-}
-else if (guestRoomChoice == 2) {
-    alert(
-        'СКЛЯНКА\n' +
-        'Вы берёте склянку. Жидкость внутри пахнет травами. Вы выпиваете — и чувствуете, как боль уходит.\n' +
-        'Вы восстанавливаете 10 HP.'
+    const guestRoomChoice = +prompt(
+        'ВЫБОР\n' +
+        '1 - Обыскать сундук.\n' +
+        '2 - Взять склянку с камина.\n' +
+        '3 - Пройти мимо.'
     )
-    health += 10
-}
-else {
-    alert(
-        'МИМО\n' +
-        'Вы проходите мимо. Тени в углах провожают вас взглядом.'
-    )
-}
+    if (guestRoomChoice == 1) {
+        const guestLoot = rollLoot()
+        balance += guestLoot
+        alert(
+            'СУНДУК\n' +
+            `Внутри ${guestLoot} монет и старая пуговица.`
+        )
+    }
+    else if (guestRoomChoice == 2) {
+        alert(
+            'СКЛЯНКА\n' +
+            'Вы берёте склянку. Жидкость внутри пахнет травами. Вы выпиваете — и чувствуете, как боль уходит.\n' +
+            'Вы восстанавливаете 10 HP.'
+        )
+        health += 10
+    }
+    else {
+        alert(
+            'МИМО\n' +
+            'Вы проходите мимо. Тени в углах провожают вас взглядом.'
+        )
+    }
 }
