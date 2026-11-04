@@ -15,6 +15,25 @@ let bossAttack = 0
 let rounds = 0
 let deathAttempts = 0
 let chiefHealth = 26
+let machineHealth = 80
+let wardenHealth = 70
+let gardenerHealth = 60
+let scientistHealth = 75
+let extraBossHealth = 0
+let negativeBalanceHappened = 0
+let boughtFromTrader = 0
+let lootRoll = 0
+
+function payMoney(amount) {
+    balance -= amount
+    if (balance < 0) {
+        negativeBalanceHappened = 1
+    }
+}
+
+function rollLoot() {
+    return Math.floor(Math.random() * 11) + 10;
+}
 
 function rollD4() {
     return Math.floor(Math.random() * 4) + 1;
