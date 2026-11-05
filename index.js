@@ -505,15 +505,347 @@ function fightGardener() {
         return
     }
 }
-function bossFight() {
+function fightScientist() {
+    scientistHealth = 75
+    bossBleedingStacks = 0
+    bossBleedingTurns = 0
+    bossStunnedTurns = 0
+    playerWoundStacks = 0
+    rounds = 0
+
     while (true) {
-        if (health > 0 && bossHealth > 0)
-            alert(
-                `РАУНД №${rounds + 1}`
-            )
-        break
+        if (scientistHealth <= 0 || health <= 0) break
+        alert(`РАУНД №${rounds + 1}\nВаше HP: ${health}\nHP учёного: ${scientistHealth}`)
+
+        if (bossStunnedTurns > 0) {
+            alert('Учёный оглушён и пропускает ход!')
+            bossStunnedTurns -= 1
+        } else {
+            const bossRoll = rollD3()
+            let bossDamage = 0
+            if (bossRoll == 1) bossDamage = 4
+            else if (bossRoll == 2) bossDamage = 6
+            else if (bossRoll == 3) bossDamage = 8
+            if (bossDamage == 0) {
+                alert('Учёный замахивается... и промахивается!')
+            } else {
+                bossDamage += playerWoundStacks
+                bossDamage -= getPlayerArmor()
+                if (bossDamage < 1) bossDamage = 1
+                health -= bossDamage
+                alert(`Учёный бьёт! Урон: ${bossDamage}.\nВаше HP: ${health}`)
+            }
+        }
+        if (health <= 0) break
+
+        const a = +prompt('ВЫБОР ДЕЙСТВИЙ\n1 - Атаковать.')
+        if (a == 1) {
+            const roll = rollD6()
+            let base = 0
+            if (roll == 2) base = 1
+            else if (roll == 3) base = 2
+            else if (roll == 4) base = 3
+            else if (roll == 5) base = 4
+            else if (roll == 6) base = 5
+            const wMax = getWeaponMax()
+            let damage = Math.floor(base * wMax / 5)
+            let critText = ''
+            if (roll == 6) {
+                const critRoll = rollD4()
+                if (critRoll <= 3) {
+                    damage += 4
+                    critText = `\nКРИТИЧЕСКИЙ УДАР! +4 урона.`
+                }
+            }
+            if (!weaponPierces()) {
+                damage -= 1
+                if (damage < 0) damage = 0
+            }
+            scientistHealth -= damage
+            let effectText = ''
+            if (damage > 0 && weaponBleeds()) {
+                bossBleedingStacks += 1
+                bossBleedingTurns = 2
+                effectText = `\nКровотечение! Стаков: ${bossBleedingStacks}.`
+            }
+            if (damage > 0 && weaponStuns()) {
+                if (Math.random() < 0.1) {
+                    bossStunnedTurns += 1
+                    effectText += `\nОГЛУШЕНИЕ! Учёный пропустит ход.`
+                }
+            }
+            if (damage > 0 && weaponWounds()) {
+                playerWoundStacks += 1
+                effectText += `\nРана на игроке! Входящий урон +1.`
+            }
+            alert(`Вы бросаете кубик: ${roll}.\nУрон: ${damage}.` + critText + effectText + `\nHP учёного: ${scientistHealth}`)
+        } else {
+            alert('Учёный: "Долго думаешь. Наука не ждёт."')
+            continue
+        }
+        if (scientistHealth <= 0) break
+
+        if (bossBleedingTurns > 0) {
+            const bleedDmg = bossBleedingStacks * 2
+            scientistHealth -= bleedDmg
+            bossBleedingTurns -= 1
+            if (bossBleedingTurns == 0) bossBleedingStacks = 0
+            alert(`Кровотечение! Учёный теряет ${bleedDmg} HP.\nHP: ${scientistHealth}`)
+        }
+        const regen = getPlayerRegen()
+        if (regen > 0) {
+            health += regen
+            if (health > maxHealth) health = maxHealth
+            alert(`Регенерация: +${regen} HP.\nВаше HP: ${health}`)
+        }
+        rounds += 1
+    }
+
+    if (health <= 0) {
+        alert('ПОРАЖЕНИЕ\nУчёный опускает жезл.\n— Хм. Данные собраны. Спасибо за участие.')
+        dieCount += 1
+        return
+    }
+    if (scientistHealth <= 0) {
+        alert('ПОБЕДА\nУчёный падает. Жезл тихо искрит.\n— Значит, всё-таки гость...')
+        inventory.push('Электрический жезл')
+        inventory.push('Резиновый халат')
+        inventory.push('Медный шлем с проводами')
+        tryEquipWeapon('Электрический жезл')
+        tryEquipArmor('Резиновый халат')
+        tryEquipArmor('Медный шлем с проводами')
+        bossDies()
+        const loot = rollLoot()
+        balance += loot
+        alert(`ДОБЫЧА\nЖезл, халат и шлем. ${loot} монет.\nМакс. HP: ${maxHealth}`)
+        return
     }
 }
+
+function fightWarden() {
+    wardenHealth = 70
+    bossBleedingStacks = 0
+    bossBleedingTurns = 0
+    bossStunnedTurns = 0
+    playerWoundStacks = 0
+    rounds = 0
+
+    while (true) {
+        if (wardenHealth <= 0 || health <= 0) break
+        alert(`РАУНД №${rounds + 1}\nВаше HP: ${health}\nHP надзирателя: ${wardenHealth}\nРан на игроке: ${playerWoundStacks}`)
+
+        if (bossStunnedTurns > 0) {
+            alert('Надзиратель оглушён и пропускает ход!')
+            bossStunnedTurns -= 1
+        } else {
+            const bossRoll = rollD3()
+            let bossDamage = 0
+            if (bossRoll == 1) bossDamage = 4
+            else if (bossRoll == 2) bossDamage = 6
+            else if (bossRoll == 3) bossDamage = 8
+            if (bossDamage == 0) {
+                alert('Надзиратель замахивается... и промахивается!')
+            } else {
+                bossDamage += playerWoundStacks
+                bossDamage -= getPlayerArmor()
+                if (bossDamage < 1) bossDamage = 1
+                health -= bossDamage
+                playerWoundStacks += 1
+                alert(`Надзиратель бьёт! Урон: ${bossDamage}.\nРана! Теперь входящий урон +${playerWoundStacks}.\nВаше HP: ${health}`)
+            }
+        }
+        if (health <= 0) break
+
+        const a = +prompt('ВЫБОР ДЕЙСТВИЙ\n1 - Атаковать.')
+        if (a == 1) {
+            const roll = rollD6()
+            let base = 0
+            if (roll == 2) base = 1
+            else if (roll == 3) base = 2
+            else if (roll == 4) base = 3
+            else if (roll == 5) base = 4
+            else if (roll == 6) base = 5
+            const wMax = getWeaponMax()
+            let damage = Math.floor(base * wMax / 5)
+            let critText = ''
+            if (roll == 6) {
+                const critRoll = rollD4()
+                if (critRoll <= 3) {
+                    damage += 4
+                    critText = `\nКРИТИЧЕСКИЙ УДАР! +4 урона.`
+                }
+            }
+            if (!weaponPierces()) {
+                damage -= 1
+                if (damage < 0) damage = 0
+            }
+            wardenHealth -= damage
+            let effectText = ''
+            if (damage > 0 && weaponBleeds()) {
+                bossBleedingStacks += 1
+                bossBleedingTurns = 2
+                effectText = `\nКровотечение! Стаков: ${bossBleedingStacks}.`
+            }
+            if (damage > 0 && weaponStuns()) {
+                if (Math.random() < 0.1) {
+                    bossStunnedTurns += 1
+                    effectText += `\nОГЛУШЕНИЕ! Надзиратель пропустит ход.`
+                }
+            }
+            alert(`Вы бросаете кубик: ${roll}.\nУрон: ${damage}.` + critText + effectText + `\nHP надзирателя: ${wardenHealth}`)
+        } else {
+            alert('Надзиратель: "Долго думаешь. Плеть не ждёт."')
+            continue
+        }
+        if (wardenHealth <= 0) break
+
+        if (bossBleedingTurns > 0) {
+            const bleedDmg = bossBleedingStacks * 2
+            wardenHealth -= bleedDmg
+            bossBleedingTurns -= 1
+            if (bossBleedingTurns == 0) bossBleedingStacks = 0
+            alert(`Кровотечение! Надзиратель теряет ${bleedDmg} HP.\nHP: ${wardenHealth}`)
+        }
+        const regen = getPlayerRegen()
+        if (regen > 0) {
+            health += regen
+            if (health > maxHealth) health = maxHealth
+            alert(`Регенерация: +${regen} HP.\nВаше HP: ${health}`)
+        }
+        rounds += 1
+    }
+
+    if (health <= 0) {
+        alert('ПОРАЖЕНИЕ\nНадзиратель опускает плеть.\n— Ничего личного. Темница должна быть полной.')
+        dieCount += 1
+        return
+    }
+    if (wardenHealth <= 0) {
+        alert('ПОБЕДА\nНадзиратель падает. Ключи со звоном катятся по полу.\n— Значит, всё-таки гость...')
+        inventory.push('Плеть надзирателя')
+        tryEquipWeapon('Плеть надзирателя')
+        bossDies()
+        const loot = rollLoot()
+        balance += loot
+        alert(`ДОБЫЧА\nПлеть надзирателя. ${loot} монет.\nМакс. HP: ${maxHealth}`)
+        return
+    }
+}
+
+function fightBoss() {
+    bossHealth = 100
+    bossBleedingStacks = 0
+    bossBleedingTurns = 0
+    bossStunnedTurns = 0
+    playerWoundStacks = 0
+    rounds = 0
+
+    while (true) {
+        if (bossHealth <= 0 || health <= 0) break
+        alert(`РАУНД №${rounds + 1}\nВаше HP: ${health}\nHP Смотрителя: ${bossHealth}`)
+
+        if (bossHasAssistant == 1) {
+            // NPC-ПОМОЩНИК — ПИШЕШЬ ТЫ
+        }
+
+        if (bossStunnedTurns > 0) {
+            alert('Смотритель оглушён и пропускает ход!')
+            bossStunnedTurns -= 1
+        } else {
+            const bossRoll = rollD3()
+            let bossDamage = 0
+            if (bossRoll == 1) bossDamage = 4
+            else if (bossRoll == 2) bossDamage = 6
+            else if (bossRoll == 3) bossDamage = 8
+            if (bossDamage == 0) {
+                alert('Смотритель замахивается... и промахивается!')
+            } else {
+                bossDamage += playerWoundStacks
+                bossDamage -= getPlayerArmor()
+                if (bossDamage < 1) bossDamage = 1
+                health -= bossDamage
+                alert(`Смотритель бьёт! Урон: ${bossDamage}.\nВаше HP: ${health}`)
+            }
+        }
+        if (health <= 0) break
+
+        const a = +prompt('ВЫБОР ДЕЙСТВИЙ\n1 - Атаковать.')
+        if (a == 1) {
+            const roll = rollD6()
+            let base = 0
+            if (roll == 2) base = 1
+            else if (roll == 3) base = 2
+            else if (roll == 4) base = 3
+            else if (roll == 5) base = 4
+            else if (roll == 6) base = 5
+            const wMax = getWeaponMax()
+            let damage = Math.floor(base * wMax / 5)
+            let critText = ''
+            if (roll == 6) {
+                const critRoll = rollD4()
+                if (critRoll <= 3) {
+                    damage += 4
+                    critText = `\nКРИТИЧЕСКИЙ УДАР! +4 урона.`
+                }
+            }
+            bossHealth -= damage
+            let effectText = ''
+            if (damage > 0 && weaponBleeds()) {
+                bossBleedingStacks += 1
+                bossBleedingTurns = 2
+                effectText = `\nКровотечение! Стаков: ${bossBleedingStacks}.`
+            }
+            if (damage > 0 && weaponStuns()) {
+                if (Math.random() < 0.1) {
+                    bossStunnedTurns += 1
+                    effectText += `\nОГЛУШЕНИЕ! Смотритель пропустит ход.`
+                }
+            }
+            if (damage > 0 && weaponWounds()) {
+                playerWoundStacks += 1
+                effectText += `\nРана на игроке! Входящий урон +1.`
+            }
+            alert(`Вы бросаете кубик: ${roll}.\nУрон: ${damage}.` + critText + effectText + `\nHP Смотрителя: ${bossHealth}`)
+        } else {
+            alert('Смотритель: "Долго думаешь. Отель не ждёт."')
+            continue
+        }
+        if (bossHealth <= 0) break
+
+        if (bossBleedingTurns > 0) {
+            const bleedDmg = bossBleedingStacks * 2
+            bossHealth -= bleedDmg
+            bossBleedingTurns -= 1
+            if (bossBleedingTurns == 0) bossBleedingStacks = 0
+            alert(`Кровотечение! Смотритель теряет ${bleedDmg} HP.\nHP: ${bossHealth}`)
+        }
+        if (bossHealth > 0 && bossHealth < 100) {
+            bossHealth += 2
+            if (bossHealth > 100) bossHealth = 100
+            alert(`Смотритель восстанавливает 2 HP.\nHP: ${bossHealth}`)
+        }
+        const regen = getPlayerRegen()
+        if (regen > 0) {
+            health += regen
+            if (health > maxHealth) health = maxHealth
+            alert(`Регенерация: +${regen} HP.\nВаше HP: ${health}`)
+        }
+        rounds += 1
+    }
+
+    if (health <= 0) {
+        alert('ПОРАЖЕНИЕ\nСмотритель поднимает вас за воротник.\n— Ты был хорошим гостем. Но некоторые двери лучше не открывать.\nПоследнее, что вы слышите, — как звенят ключи.')
+        dieCount += 1
+        return
+    }
+    if (bossHealth <= 0) {
+        alert('ПОБЕДА\nСмотритель падает на колени. Связка ключей рассыпается.\n— Значит... всё-таки... — шепчет он. — ...кто-то смог.\nДвери открываются — и в вестибюль проникает свет.')
+        winCount += 1
+        alert('КОНЕЦ\nВы выходите из отеля. Король ждёт. Отель остаётся позади — но вы знаете, что он не сгорел. Он просто затаился.\nВы победили. В этот раз.')
+        return
+    }
+}
+
 
 alert(
     'НАЧАЛО\n' +
