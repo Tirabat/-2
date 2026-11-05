@@ -153,7 +153,7 @@ function shuffleArray(arr) {
     return arr
 }
 function rollD3() {
-    return Math.floor(Math.random() * 2) + 1;
+    return Math.floor(Math.random() * 3) + 1;
 }
 function rollD6() {
     return Math.floor(Math.random() * 6) + 1;
@@ -203,7 +203,9 @@ function fightChief() {
             const wMax = getWeaponMax()
             let damage = Math.floor(base * wMax / 5)
             let critText = ''
-            if (roll == 6) {
+            let critThreshold = 6
+            if (inventory.indexOf('Амулет удачи') != -1) critThreshold = 5
+            if (roll >= critThreshold) {
                 const critRoll = rollD4()
                 if (critRoll <= 3) {
                     damage += 4
@@ -320,7 +322,9 @@ function fightMachine() {
             const wMax = getWeaponMax()
             let damage = Math.floor(base * wMax / 5)
             let critText = ''
-            if (roll == 6) {
+            let critThreshold = 6
+            if (inventory.indexOf('Амулет удачи') != -1) critThreshold = 5
+            if (roll >= critThreshold) {
                 const critRoll = rollD4()
                 if (critRoll <= 3) {
                     damage += 4
@@ -438,7 +442,9 @@ function fightGardener() {
             const wMax = getWeaponMax()
             let damage = Math.floor(base * wMax / 5)
             let critText = ''
-            if (roll == 6) {
+            let critThreshold = 6
+            if (inventory.indexOf('Амулет удачи') != -1) critThreshold = 5
+            if (roll >= critThreshold) {
                 const critRoll = rollD4()
                 if (critRoll <= 3) {
                     damage += 4
@@ -550,7 +556,9 @@ function fightScientist() {
             const wMax = getWeaponMax()
             let damage = Math.floor(base * wMax / 5)
             let critText = ''
-            if (roll == 6) {
+            let critThreshold = 6
+            if (inventory.indexOf('Амулет удачи') != -1) critThreshold = 5
+            if (roll >= critThreshold) {
                 const critRoll = rollD4()
                 if (critRoll <= 3) {
                     damage += 4
@@ -668,7 +676,9 @@ function fightWarden() {
             const wMax = getWeaponMax()
             let damage = Math.floor(base * wMax / 5)
             let critText = ''
-            if (roll == 6) {
+            let critThreshold = 6
+            if (inventory.indexOf('Амулет удачи') != -1) critThreshold = 5
+            if (roll >= critThreshold) {
                 const critRoll = rollD4()
                 if (critRoll <= 3) {
                     damage += 4
@@ -791,7 +801,9 @@ function fightBoss() {
             const wMax = getWeaponMax()
             let damage = Math.floor(base * wMax / 5)
             let critText = ''
-            if (roll == 6) {
+            let critThreshold = 6
+            if (inventory.indexOf('Амулет удачи') != -1) critThreshold = 5
+            if (roll >= critThreshold) {
                 const critRoll = rollD4()
                 if (critRoll <= 3) {
                     damage += 4
@@ -1857,6 +1869,9 @@ while (true) {
         'Повар: "Значит, ужин будет из тебя."'
     )
     fightChief()
+    if (health <= 0) {
+        break
+    }
     alert(
         'ГАЛЕРЕЯ НАД ПРОВАЛОМ\n' +
         'Коридор уходит вперёд, но пола под ним больше нет. Балкон без перил, а под ним - чернота. Доски скрипят, некоторые сгнили насквозь. Пройти можно только по краю.'
