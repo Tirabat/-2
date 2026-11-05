@@ -129,6 +129,166 @@ function tryEquipWeapon(item) {
     }
 }
 
+function showEquipment() {
+    let menu = 'СНАРЯЖЕНИЕ\n'
+    menu += `Оружие: ${equippedWeapon} (${getWeaponMax()} урона)\n`
+    menu += `Голова: ${equippedHelmet}\n`
+    menu += `Торс: ${equippedChest}\n`
+    menu += `Обувь: ${equippedFeet}\n`
+    menu += `Руки: ${equippedHands == null ? 'пусто' : equippedHands}\n`
+    menu += `\nОбщая броня: ${getPlayerArmor()}\n`
+    menu += `Макс. HP: ${maxHealth}`
+    return menu
+}
+
+function manageEquipment() {
+    while (true) {
+        alert(showEquipment())
+        const slot = +prompt(
+            'СМЕНА СНАРЯЖЕНИЯ\n' +
+            '1 - Сменить оружие.\n' +
+            '2 - Сменить шлем.\n' +
+            '3 - Сменить нагрудник.\n' +
+            '4 - Сменить обувь.\n' +
+            '5 - Сменить перчатки.\n' +
+            '0 - Выйти.'
+        )
+
+        if (slot == 0) {
+            return
+        }
+
+        if (slot == 1) {
+            const available = []
+            for (let i = 0; i < inventory.length; i++) {
+                const it = inventory[i]
+                if (it == 'Деревянный меч' || it == 'Тяжёлый тесак' || it == 'Разводной ключ' || it == 'Секатор королевского садовника' || it == 'Электрический жезл' || it == 'Плеть надзирателя' || it == 'Стальной меч') {
+                    available.push(it)
+                }
+            }
+            if (available.length == 0) {
+                alert('Нет оружия в инвентаре.')
+                continue
+            }
+            let menu = 'ОРУЖИЕ В ИНВЕНТАРЕ\n'
+            for (let i = 0; i < available.length; i++) {
+                menu += `${i + 1} - ${available[i]}${available[i] == equippedWeapon ? ' (надето)' : ''}\n`
+            }
+            menu += '0 - Отмена.'
+            const pick = +prompt(menu)
+            if (pick >= 1 && pick <= available.length) {
+                equippedWeapon = available[pick - 1]
+                alert(`Надето: ${equippedWeapon}`)
+            }
+            continue
+        }
+
+        if (slot == 2) {
+            const available = []
+            for (let i = 0; i < inventory.length; i++) {
+                const it = inventory[i]
+                if (it == 'Кожаный шлем' || it == 'Колпак повара' || it == 'Каска машиниста' || it == 'Медный шлем с проводами' || it == 'Венок из шипов') {
+                    available.push(it)
+                }
+            }
+            if (available.length == 0) {
+                alert('Нет шлемов в инвентаре.')
+                continue
+            }
+            let menu = 'ШЛЕМЫ В ИНВЕНТАРЕ\n'
+            for (let i = 0; i < available.length; i++) {
+                menu += `${i + 1} - ${available[i]}${available[i] == equippedHelmet ? ' (надето)' : ''}\n`
+            }
+            menu += '0 - Отмена.'
+            const pick = +prompt(menu)
+            if (pick >= 1 && pick <= available.length) {
+                equippedHelmet = available[pick - 1]
+                alert(`Надето: ${equippedHelmet}`)
+            }
+            continue
+        }
+
+        if (slot == 3) {
+            const available = []
+            for (let i = 0; i < inventory.length; i++) {
+                const it = inventory[i]
+                if (it == 'Кожаный нагрудник' || it == 'Фартук повара' || it == 'Кожаный фартук машиниста' || it == 'Доспех из коры' || it == 'Резиновый халат') {
+                    available.push(it)
+                }
+            }
+            if (available.length == 0) {
+                alert('Нет нагрудников в инвентаре.')
+                continue
+            }
+            let menu = 'НАГРУДНИКИ В ИНВЕНТАРЕ\n'
+            for (let i = 0; i < available.length; i++) {
+                menu += `${i + 1} - ${available[i]}${available[i] == equippedChest ? ' (надето)' : ''}\n`
+            }
+            menu += '0 - Отмена.'
+            const pick = +prompt(menu)
+            if (pick >= 1 && pick <= available.length) {
+                equippedChest = available[pick - 1]
+                alert(`Надето: ${equippedChest}`)
+            }
+            continue
+        }
+
+        if (slot == 4) {
+            const available = []
+            for (let i = 0; i < inventory.length; i++) {
+                const it = inventory[i]
+                if (it == 'Кожаные сапоги' || it == 'Ботинки машиниста') {
+                    available.push(it)
+                }
+            }
+            if (available.length == 0) {
+                alert('Нет обуви в инвентаре.')
+                continue
+            }
+            let menu = 'ОБУВЬ В ИНВЕНТАРЕ\n'
+            for (let i = 0; i < available.length; i++) {
+                menu += `${i + 1} - ${available[i]}${available[i] == equippedFeet ? ' (надето)' : ''}\n`
+            }
+            menu += '0 - Отмена.'
+            const pick = +prompt(menu)
+            if (pick >= 1 && pick <= available.length) {
+                equippedFeet = available[pick - 1]
+                alert(`Надето: ${equippedFeet}`)
+            }
+            continue
+        }
+
+        if (slot == 5) {
+            const available = []
+            for (let i = 0; i < inventory.length; i++) {
+                const it = inventory[i]
+                if (it == 'Рукавицы машиниста') {
+                    available.push(it)
+                }
+            }
+            if (available.length == 0) {
+                alert('Нет перчаток в инвентаре.')
+                continue
+            }
+            let menu = 'ПЕРЧАТКИ В ИНВЕНТАРЕ\n1 - Снять (пусто)\n'
+            for (let i = 0; i < available.length; i++) {
+                menu += `${i + 2} - ${available[i]}${available[i] == equippedHands ? ' (надето)' : ''}\n`
+            }
+            menu += '0 - Отмена.'
+            const pick = +prompt(menu)
+            if (pick == 1) {
+                equippedHands = null
+                alert('Перчатки сняты.')
+            }
+            else if (pick >= 2 && pick <= available.length + 1) {
+                equippedHands = available[pick - 2]
+                alert(`Надето: ${equippedHands}`)
+            }
+            continue
+        }
+    }
+}
+
 function bossDies() {
     maxHealth += 10
     health = maxHealth
@@ -191,7 +351,7 @@ function fightChief() {
         }
         if (health <= 0) break
 
-        const a = +prompt('ВЫБОР ДЕЙСТВИЙ\n1 - Атаковать.')
+        const a = +prompt('ВЫБОР ДЕЙСТВИЙ\n1 - Атаковать.\n2 - Сменить снаряжение.')
         if (a == 1) {
             const roll = rollD6()
             let base = 0
@@ -234,6 +394,9 @@ function fightChief() {
                 effectText += `\nРана на игроке! Входящий урон +1.`
             }
             alert(`Вы бросаете кубик: ${roll}.\nУрон: ${damage}.` + critText + effectText + `\nHP повара: ${chiefHealth}`)
+        } else if (a == 2) {
+            manageEquipment()
+            continue
         } else {
             alert('Повар усмехается: "Долго думаешь. Ужин стынет."')
             continue
@@ -310,7 +473,7 @@ function fightMachine() {
         }
         if (health <= 0) break
 
-        const a = +prompt('ВЫБОР ДЕЙСТВИЙ\n1 - Атаковать.')
+        const a = +prompt('ВЫБОР ДЕЙСТВИЙ\n1 - Атаковать.\n2 - Сменить снаряжение.')
         if (a == 1) {
             const roll = rollD6()
             let base = 0
@@ -353,6 +516,9 @@ function fightMachine() {
                 effectText += `\nРана на игроке! Входящий урон +1.`
             }
             alert(`Вы бросаете кубик: ${roll}.\nУрон: ${damage}.` + critText + effectText + `\nHP машиниста: ${machineHealth}`)
+        } else if (a == 2) {
+            manageEquipment()
+            continue
         } else {
             alert('Машинист: "Долго думаешь. Пар не ждёт."')
             continue
@@ -430,7 +596,7 @@ function fightGardener() {
         }
         if (health <= 0) break
 
-        const a = +prompt('ВЫБОР ДЕЙСТВИЙ\n1 - Атаковать.')
+        const a = +prompt('ВЫБОР ДЕЙСТВИЙ\n1 - Атаковать.\n2 - Сменить снаряжение.')
         if (a == 1) {
             const roll = rollD6()
             let base = 0
@@ -469,6 +635,9 @@ function fightGardener() {
                 effectText += `\nРана на игроке! Входящий урон +1.`
             }
             alert(`Вы бросаете кубик: ${roll}.\nУрон: ${damage}.` + critText + effectText + `\nHP садовника: ${gardenerHealth}`)
+        } else if (a == 2) {
+            manageEquipment()
+            continue
         } else {
             alert('Садовник: "Ты не торопишься. А сад ждёт."')
             continue
@@ -544,7 +713,7 @@ function fightScientist() {
         }
         if (health <= 0) break
 
-        const a = +prompt('ВЫБОР ДЕЙСТВИЙ\n1 - Атаковать.')
+        const a = +prompt('ВЫБОР ДЕЙСТВИЙ\n1 - Атаковать.\n2 - Сменить снаряжение.')
         if (a == 1) {
             const roll = rollD6()
             let base = 0
@@ -587,6 +756,9 @@ function fightScientist() {
                 effectText += `\nРана на игроке! Входящий урон +1.`
             }
             alert(`Вы бросаете кубик: ${roll}.\nУрон: ${damage}.` + critText + effectText + `\nHP учёного: ${scientistHealth}`)
+        } else if (a == 2) {
+            manageEquipment()
+            continue
         } else {
             alert('Учёный: "Долго думаешь. Наука не ждёт."')
             continue
@@ -664,7 +836,7 @@ function fightWarden() {
         }
         if (health <= 0) break
 
-        const a = +prompt('ВЫБОР ДЕЙСТВИЙ\n1 - Атаковать.')
+        const a = +prompt('ВЫБОР ДЕЙСТВИЙ\n1 - Атаковать.\n2 - Сменить снаряжение.')
         if (a == 1) {
             const roll = rollD6()
             let base = 0
@@ -703,6 +875,9 @@ function fightWarden() {
                 }
             }
             alert(`Вы бросаете кубик: ${roll}.\nУрон: ${damage}.` + critText + effectText + `\nHP надзирателя: ${wardenHealth}`)
+        } else if (a == 2) {
+            manageEquipment()
+            continue
         } else {
             alert('Надзиратель: "Долго думаешь. Плеть не ждёт."')
             continue
@@ -789,7 +964,7 @@ function fightBoss() {
         }
         if (health <= 0) break
 
-        const a = +prompt('ВЫБОР ДЕЙСТВИЙ\n1 - Атаковать.')
+        const a = +prompt('ВЫБОР ДЕЙСТВИЙ\n1 - Атаковать.\n2 - Сменить снаряжение.')
         if (a == 1) {
             const roll = rollD6()
             let base = 0
@@ -828,6 +1003,9 @@ function fightBoss() {
                 effectText += `\nРана на игроке! Входящий урон +1.`
             }
             alert(`Вы бросаете кубик: ${roll}.\nУрон: ${damage}.` + critText + effectText + `\nHP Смотрителя: ${bossHealth}`)
+        } else if (a == 2) {
+            manageEquipment()
+            continue
         } else {
             alert('Смотритель: "Долго думаешь. Отель не ждёт."')
             continue
@@ -905,8 +1083,14 @@ while (true) {
         '1 - "Добрый день, да я бы хотел, остановиться на 1 ночь, не более."\n' +
         '2 - "Добрый день, да я хотел бы остановиться у вас на неделю."\n' +
         '3 - "Меня прислал король, чтобы я расследовал пропажу стражи."\n' +
-        '4 - "Нет извините, я ошибся дверью. Всего хорошего."'
+        '4 - "Нет извините, я ошибся дверью. Всего хорошего."\n' +
+        '5 - "Дайте мне минуту, я проверю снаряжение."'
     )
+
+    if (hallChoice == 5) {
+        manageEquipment()
+        continue
+    }
 
     //торги
     if (hallChoice == 1) {
