@@ -14,11 +14,11 @@ let bossHealth = 800
 let bossAttack = 0
 let rounds = 0
 let deathAttempts = 0
-let chiefHealth = 26
-let machineHealth = 80
-let wardenHealth = 70
-let gardenerHealth = 60
-let scientistHealth = 75
+let chiefHealth = 46
+let machineHealth = 100
+let wardenHealth = 90
+let gardenerHealth = 80
+let scientistHealth = 95
 let bossHasAssistant = 0
 let negativeBalanceHappened = 0
 let maxHealth = 50
@@ -71,14 +71,14 @@ function getPlayerRegen() {
 }
 
 function getWeaponMax() {
-    if (equippedWeapon == 'Деревянный меч') return 5
-    if (equippedWeapon == 'Тяжёлый тесак') return 8
-    if (equippedWeapon == 'Разводной ключ') return 10
-    if (equippedWeapon == 'Секатор королевского садовника') return 6
-    if (equippedWeapon == 'Электрический жезл') return 9
-    if (equippedWeapon == 'Плеть надзирателя') return 6
-    if (equippedWeapon == 'Стальной меч') return 8
-    return 5
+    if (equippedWeapon == 'Деревянный меч') return 20
+    if (equippedWeapon == 'Тяжёлый тесак') return 23
+    if (equippedWeapon == 'Разводной ключ') return 25
+    if (equippedWeapon == 'Секатор королевского садовника') return 21
+    if (equippedWeapon == 'Электрический жезл') return 24
+    if (equippedWeapon == 'Плеть надзирателя') return 21
+    if (equippedWeapon == 'Стальной меч') return 23
+    return 20
 }
 
 function weaponBleeds() { return equippedWeapon == 'Тяжёлый тесак' }
@@ -743,7 +743,7 @@ function fightWarden() {
 }
 
 function fightBoss() {
-    bossHealth = 100
+    bossHealth = 120
     bossBleedingStacks = 0
     bossBleedingTurns = 0
     bossStunnedTurns = 0
