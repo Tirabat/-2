@@ -19,7 +19,7 @@ let machineHealth = 80
 let wardenHealth = 70
 let gardenerHealth = 60
 let scientistHealth = 75
-let extraBossHealth = 0
+let bossHasAssistant = 0
 let negativeBalanceHappened = 0
 let maxHealth = 50
 let equippedWeapon = 'Деревянный меч'
@@ -159,88 +159,118 @@ function rollD6() {
     return Math.floor(Math.random() * 6) + 1;
 }
 function fightChief() {
+    chiefHealth = 26
+    bossBleedingStacks = 0
+    bossBleedingTurns = 0
+    bossStunnedTurns = 0
+    playerWoundStacks = 0
+    rounds = 0
+
     while (true) {
-        if (chiefHealth <= 0 || health <= 0) {
-            break
-        }
-        alert(
-            `РАУНД №${rounds + 1}\n` +
-            `Ваше HP: ${health}\n` +
-            `HP повара: ${chiefHealth}`
-        )
-        const a = +prompt(
-            'ВЫБОР ДЕЙСТВИЙ\n' +
-            '1 - Атаковать.'
-        )
-        if (a == 1) {
-            const playerRoll = rollD6()
-            let playerDamage = 0
-            if (playerRoll >= 2) {
-                playerDamage = playerRoll - 1
+        if (chiefHealth <= 0 || health <= 0) break
+        alert(`РАУНД №${rounds + 1}\nВаше HP: ${health}\nHP повара: ${chiefHealth}`)
+
+        if (bossStunnedTurns > 0) {
+            alert('Повар оглушён и пропускает ход!')
+            bossStunnedTurns -= 1
+        } else {
+            const bossRoll = rollD3()
+            let bossDamage = 0
+            if (bossRoll == 1) bossDamage = 4
+            else if (bossRoll == 2) bossDamage = 6
+            else if (bossRoll == 3) bossDamage = 8
+            if (bossDamage == 0) {
+                alert('Повар замахивается... и промахивается!')
+            } else {
+                bossDamage += playerWoundStacks
+                bossDamage -= getPlayerArmor()
+                if (bossDamage < 1) bossDamage = 1
+                health -= bossDamage
+                alert(`Повар бьёт! Урон: ${bossDamage}.\nВаше HP: ${health}`)
             }
+        }
+        if (health <= 0) break
+
+        const a = +prompt('ВЫБОР ДЕЙСТВИЙ\n1 - Атаковать.')
+        if (a == 1) {
+            const roll = rollD6()
+            let base = 0
+            if (roll == 2) base = 1
+            else if (roll == 3) base = 2
+            else if (roll == 4) base = 3
+            else if (roll == 5) base = 4
+            else if (roll == 6) base = 5
+            const wMax = getWeaponMax()
+            let damage = Math.floor(base * wMax / 5)
             let critText = ''
-            if (playerRoll == 6) {
+            if (roll == 6) {
                 const critRoll = rollD4()
                 if (critRoll <= 3) {
-                    playerDamage += 4
-                    critText = `\nКРИТИЧЕСКИЙ УДАР! (d4: ${critRoll}) +4 урона.`
-                }
-                else {
-                    critText = `\nШанс на крит не сработал (d4: ${critRoll}).`
+                    damage += 4
+                    critText = `\nКРИТИЧЕСКИЙ УДАР! +4 урона.`
                 }
             }
-            chiefHealth -= playerDamage
-            alert(
-                `Вы бросаете кубик: ${playerRoll}.\n` +
-                `Урон: ${playerDamage}.` +
-                critText + '\n' +
-                `HP повара: ${chiefHealth}`
-            )
-        }
-        else {
+            if (!weaponPierces()) {
+                damage -= 2
+                if (damage < 0) damage = 0
+            }
+            chiefHealth -= damage
+            let effectText = ''
+            if (damage > 0 && weaponBleeds()) {
+                bossBleedingStacks += 1
+                bossBleedingTurns = 2
+                effectText = `\nКровотечение! Стаков: ${bossBleedingStacks}.`
+            }
+            if (damage > 0 && weaponStuns()) {
+                if (Math.random() < 0.1) {
+                    bossStunnedTurns += 1
+                    effectText += `\nОГЛУШЕНИЕ! Повар пропустит ход.`
+                }
+            }
+            if (damage > 0 && weaponWounds()) {
+                playerWoundStacks += 1
+                effectText += `\nРана на игроке! Входящий урон +1.`
+            }
+            alert(`Вы бросаете кубик: ${roll}.\nУрон: ${damage}.` + critText + effectText + `\nHP повара: ${chiefHealth}`)
+        } else {
             alert('Повар усмехается: "Долго думаешь. Ужин стынет."')
             continue
         }
-        const bossRoll = rollD3()
-        let bossDamage = 0
-        if (bossRoll == 1) {
-            bossDamage = 1
+        if (chiefHealth <= 0) break
+
+        if (bossBleedingTurns > 0) {
+            const bleedDmg = bossBleedingStacks * 2
+            chiefHealth -= bleedDmg
+            bossBleedingTurns -= 1
+            if (bossBleedingTurns == 0) bossBleedingStacks = 0
+            alert(`Кровотечение! Повар теряет ${bleedDmg} HP.\nHP повара: ${chiefHealth}`)
         }
-        else if (bossRoll == 2) {
-            bossDamage = 2
-        }
-        else if (bossRoll == 3) {
-            bossDamage = 4
-        }
-        if (bossDamage == 0) {
-            alert('Повар замахивается... и промахивается!')
-        }
-        else {
-            health -= bossDamage
-            alert(
-                'УРОН\n' +
-                `Повар бьёт! Урон: ${bossDamage}.\n` +
-                `Ваше HP: ${health}`
-            )
-        }
-        if (health <= 0) {
-            break
+        const regen = getPlayerRegen()
+        if (regen > 0) {
+            health += regen
+            if (health > maxHealth) health = maxHealth
+            alert(`Регенерация: +${regen} HP.\nВаше HP: ${health}`)
         }
         rounds += 1
     }
+
     if (health <= 0) {
-        alert(
-            'ПОРАЖЕНИЕ\n' +
-            'Повар опускает тесак и смотрит на вас без злобы. Просто устало.\n' +
-            '— Ничего личного, гость. Просто ужин должен быть свежим.\n' +
-            'Последнее, что вы слышите, — как шипит котёл.'
-        )
+        alert('ПОРАЖЕНИЕ\nПовар опускает тесак и смотрит на вас без злобы. Просто устало.\n— Ничего личного, гость. Просто ужин должен быть свежим.\nПоследнее, что вы слышите, — как шипит котёл.')
         dieCount += 1
         return
     }
     if (chiefHealth <= 0) {
-        alert('ПОБЕДА\n' + '')
-        inventory.push('')
+        alert('ПОБЕДА\nПовар падает на колени, тесак со звоном катится по полу.\n— Значит, всё-таки гость, — говорит он тихо. — Надо было сразу поверить.')
+        inventory.push('Тяжёлый тесак')
+        inventory.push('Фартук повара')
+        inventory.push('Колпак повара')
+        tryEquipWeapon('Тяжёлый тесак')
+        tryEquipArmor('Фартук повара')
+        tryEquipArmor('Колпак повара')
+        bossDies()
+        const loot = rollLoot()
+        balance += loot
+        alert(`ДОБЫЧА\nТесак, фартук и колпак. ${loot} монет.\nМакс. HP: ${maxHealth}`)
         return
     }
 }
@@ -366,33 +396,81 @@ while (true) {
     }
     //переплата
     else if (hallChoice == 2) {
+    alert(
+        'ОПЛАТА\n' +
+        'Айкар: "Ого, вы первый кто решил остановиться на такое долгое время. Сейчас посчитаю."\n' +
+        'Айкар: так один день сто... плюс пла... за 7 дней... С вас 140 монет.'
+    )
+    const weekChoice = prompt(
+        'ДИАЛОГ\n' +
+        '1 - Ого, я не ожидал такую цену. Есть способ уменьшить оплату?\n' +
+        '2 - У меня пока нет такой суммы. Можно как то разбить по частям?\n' +
+        '3 - Хорошо, вот 140 монет за всё.'
+    )
+    if (weekChoice == 1) {
         alert(
             'ОПЛАТА\n' +
-            'Айкар: "Ого, вы первый кто решил остановиться на такое долгое время. Сейчас посчитаю."\n' +
-            'Айкар: так один день сто... плюс пла... за 7 дней... С вас 140 монет.'
+            'Айкар: "Ну вообще вы первый кто взял номер на такое время, я готов вам сделать скидку. Вам за 7 дней нужно будет заплатить всего лишь 70 монет"\n' +
+            'Вы понимаете что это все еще очень дорого, но ничего уже не поделаешь.\n' +
+            'Вы: "Хорошо, меня устраивает."'
         )
-        const weekChoice = prompt(
-            'ДИАЛОГ\n' +
-            '1 - Ого, я не ожидал такую цену. Есть способ уменьшить оплату?\n' +
-            '2 - У меня пока нет такой суммы. Можно как то разбить по частям?'
-        )
-        if (weekChoice == 1) {
-            alert(
-                'ОПЛАТА\n' +
-                'Айкар: "Ну вообще вы первый кто взял номер на такое время, я готов вам сделать скидку. Вам за 7 дней нужно будет заплатить всего лишь 70 монет"\n' +
-                'Вы понимаете что это все еще очень дорого, но ничего уже не поделаешь.\n' +
-                'Вы: "Хорошо, меня устраивает."'
-            )
-            roomPrice = 70
+        if (balance >= 70) {
+            payMoney(70)
+            alert('БАЛАНС\n' + `Вы платите 70 монет. Осталось: ${balance}.`)
         }
-        else if (weekChoice == 2) {
+        else {
+            payMoney(70)
             alert(
-                'ПЛАТА\n' +
-                'Айкар: "Вы можете заплатить за один день и в конце каждого дня просто платить еще раз. Один день стоит 20 монет"\n' +
-                'Вы: "Я согласен."'
+                'ДОЛГ\n' +
+                'Айкар забирает всё, что есть, и записывает остаток в книгу.\n' +
+                '— Ничего. Отель подождёт. Он умеет ждать.\n' +
+                `Баланс ушёл в минус: ${balance}.`
             )
         }
+        roomPrice = 0
     }
+    else if (weekChoice == 2) {
+        alert(
+            'ПЛАТА\n' +
+            'Айкар: "Вы можете заплатить за один день и в конце каждого дня просто платить еще раз. Один день стоит 20 монет"\n' +
+            'Вы: "Я согласен."'
+        )
+        if (balance >= 20) {
+            payMoney(20)
+            alert('БАЛАНС\n' + `Вы платите 20 монет. Осталось: ${balance}.`)
+        }
+        else {
+            payMoney(20)
+            alert(
+                'ДОЛГ\n' +
+                'Айкар забирает всё, что есть.\n' +
+                `Баланс ушёл в минус: ${balance}.`
+            )
+        }
+        roomPrice = 0
+    }
+    else if (weekChoice == 3) {
+        alert(
+            'ОПЛАТА\n' +
+            'Айкар: "Полная сумма? Похвально."\n' +
+            'Он забирает 140 монет и молча выдаёт ключ.'
+        )
+        if (balance >= 140) {
+            payMoney(140)
+            alert('БАЛАНС\n' + `Вы платите 140 монет. Осталось: ${balance}.`)
+        }
+        else {
+            payMoney(140)
+            alert(
+                'ДОЛГ\n' +
+                'Айкар забирает всё, что есть, и записывает остаток в книгу.\n' +
+                'Ничего. Отель подождёт.\n' +
+                `Баланс ушёл в минус: ${balance}.`
+            )
+        }
+        roomPrice = 0
+    }
+}
     //лишний распрос
     else if (hallChoice == 3) {
         const kingAnswer = +prompt(
@@ -492,7 +570,7 @@ while (true) {
         'Айкар: "Ага, все записал, ваша комната №14. Удачной ночи."\n' +
         'Вы прощаетесь с ним и открываете дверь чтобы пройти дальше в свою комнату.'
     )
-    balance -= roomPrice
+    payMoney(roomPrice)
     alert(
         'БАЛАНС\n' +
         `У вас осталось: ${balance} монет`
