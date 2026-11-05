@@ -9,16 +9,16 @@ let bargainPatience = 3
 let roomPrice = 20
 let skipIntro = 0
 let runawayCount = 0
-let health = 50
-let bossHealth = 800
+let health = 100
+let bossHealth = 200
 let bossAttack = 0
 let rounds = 0
 let deathAttempts = 0
-let chiefHealth = 96
-let machineHealth = 180
-let wardenHealth = 190
-let gardenerHealth = 210
-let scientistHealth = 150
+let chiefHealth = 60
+let machineHealth = 110
+let wardenHealth = 110
+let gardenerHealth = 110
+let scientistHealth = 90
 let bossHasAssistant = 0
 let negativeBalanceHappened = 0
 let maxHealth = 100
@@ -319,7 +319,7 @@ function rollD6() {
     return Math.floor(Math.random() * 6) + 1;
 }
 function fightChief() {
-    chiefHealth = 96
+    chiefHealth = 60
     bossBleedingStacks = 0
     bossBleedingTurns = 0
     bossStunnedTurns = 0
@@ -336,9 +336,9 @@ function fightChief() {
         } else {
             const bossRoll = rollD3()
             let bossDamage = 0
-            if (bossRoll == 1) bossDamage = 12
-            else if (bossRoll == 2) bossDamage = 16
-            else if (bossRoll == 3) bossDamage = 20
+            if (bossRoll == 1) bossDamage = 8
+            else if (bossRoll == 2) bossDamage = 12
+            else if (bossRoll == 3) bossDamage = 16
             if (bossDamage == 0) {
                 alert('Повар замахивается... и промахивается!')
             } else {
@@ -440,7 +440,7 @@ function fightChief() {
     }
 }
 function fightMachine() {
-    machineHealth = 180
+    machineHealth = 100
     bossBleedingStacks = 0
     bossBleedingTurns = 0
     bossStunnedTurns = 0
@@ -458,9 +458,9 @@ function fightMachine() {
         } else {
             const bossRoll = rollD3()
             let bossDamage = 0
-            if (bossRoll == 1) bossDamage = 16
-            else if (bossRoll == 2) bossDamage = 22
-            else if (bossRoll == 3) bossDamage = 28
+            if (bossRoll == 1) bossDamage = 12
+            else if (bossRoll == 2) bossDamage = 18
+            else if (bossRoll == 3) bossDamage = 24
             if (bossDamage == 0) {
                 alert('Машинист замахивается... и промахивается!')
             } else {
@@ -564,7 +564,7 @@ function fightMachine() {
 }
 
 function fightGardener() {
-    gardenerHealth = 210
+    gardenerHealth = 110
     bossBleedingStacks = 0
     bossBleedingTurns = 0
     bossStunnedTurns = 0
@@ -581,9 +581,9 @@ function fightGardener() {
         } else {
             const bossRoll = rollD3()
             let bossDamage = 0
-            if (bossRoll == 1) bossDamage = 10
-            else if (bossRoll == 2) bossDamage = 13
-            else if (bossRoll == 3) bossDamage = 16
+            if (bossRoll == 1) bossDamage = 8
+            else if (bossRoll == 2) bossDamage = 11
+            else if (bossRoll == 3) bossDamage = 14
             if (bossDamage == 0) {
                 alert('Садовник замахивается... и промахивается!')
             } else {
@@ -681,7 +681,7 @@ function fightGardener() {
     }
 }
 function fightScientist() {
-    scientistHealth = 150
+    scientistHealth = 90
     bossBleedingStacks = 0
     bossBleedingTurns = 0
     bossStunnedTurns = 0
@@ -698,9 +698,9 @@ function fightScientist() {
         } else {
             const bossRoll = rollD3()
             let bossDamage = 0
-            if (bossRoll == 1) bossDamage = 13
-            else if (bossRoll == 2) bossDamage = 17
-            else if (bossRoll == 3) bossDamage = 22
+            if (bossRoll == 1) bossDamage = 10
+            else if (bossRoll == 2) bossDamage = 14
+            else if (bossRoll == 3) bossDamage = 18
             if (bossDamage == 0) {
                 alert('Учёный замахивается... и промахивается!')
             } else {
@@ -803,7 +803,7 @@ function fightScientist() {
 }
 
 function fightWarden() {
-    wardenHealth = 190
+    wardenHealth = 110
     bossBleedingStacks = 0
     bossBleedingTurns = 0
     bossStunnedTurns = 0
@@ -820,9 +820,9 @@ function fightWarden() {
         } else {
             const bossRoll = rollD3()
             let bossDamage = 0
-            if (bossRoll == 1) bossDamage = 12
-            else if (bossRoll == 2) bossDamage = 14
-            else if (bossRoll == 3) bossDamage = 16
+            if (bossRoll == 1) bossDamage = 8
+            else if (bossRoll == 2) bossDamage = 10
+            else if (bossRoll == 3) bossDamage = 12
             if (bossDamage == 0) {
                 alert('Надзиратель замахивается... и промахивается!')
             } else {
@@ -918,7 +918,7 @@ function fightWarden() {
 }
 
 function fightBoss() {
-    bossHealth = 800
+    bossHealth = 200
     bossBleedingStacks = 0
     bossBleedingTurns = 0
     bossStunnedTurns = 0
@@ -949,9 +949,9 @@ function fightBoss() {
         } else {
             const bossRoll = rollD3()
             let bossDamage = 0
-            if (bossRoll == 1) bossDamage = 20
-            else if (bossRoll == 2) bossDamage = 26
-            else if (bossRoll == 3) bossDamage = 32
+            if (bossRoll == 1) bossDamage = 14
+            else if (bossRoll == 2) bossDamage = 20
+            else if (bossRoll == 3) bossDamage = 26
             if (bossDamage == 0) {
                 alert('Смотритель замахивается... и промахивается!')
             } else {
