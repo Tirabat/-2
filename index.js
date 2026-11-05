@@ -274,6 +274,237 @@ function fightChief() {
         return
     }
 }
+function fightMachine() {
+    machineHealth = 80
+    bossBleedingStacks = 0
+    bossBleedingTurns = 0
+    bossStunnedTurns = 0
+    playerWoundStacks = 0
+    rounds = 0
+    let machineBonus = 0
+
+    while (true) {
+        if (machineHealth <= 0 || health <= 0) break
+        alert(`РАУНД №${rounds + 1}\nВаше HP: ${health}\nHP машиниста: ${machineHealth}\nБонус урона машиниста: +${machineBonus}`)
+
+        if (bossStunnedTurns > 0) {
+            alert('Машинист оглушён и пропускает ход!')
+            bossStunnedTurns -= 1
+        } else {
+            const bossRoll = rollD3()
+            let bossDamage = 0
+            if (bossRoll == 1) bossDamage = 4
+            else if (bossRoll == 2) bossDamage = 6
+            else if (bossRoll == 3) bossDamage = 8
+            if (bossDamage == 0) {
+                alert('Машинист замахивается... и промахивается!')
+            } else {
+                bossDamage += machineBonus + playerWoundStacks
+                bossDamage -= getPlayerArmor()
+                if (bossDamage < 1) bossDamage = 1
+                health -= bossDamage
+                alert(`Машинист бьёт! Урон: ${bossDamage}.\nВаше HP: ${health}`)
+            }
+        }
+        if (health <= 0) break
+
+        const a = +prompt('ВЫБОР ДЕЙСТВИЙ\n1 - Атаковать.')
+        if (a == 1) {
+            const roll = rollD6()
+            let base = 0
+            if (roll == 2) base = 1
+            else if (roll == 3) base = 2
+            else if (roll == 4) base = 3
+            else if (roll == 5) base = 4
+            else if (roll == 6) base = 5
+            const wMax = getWeaponMax()
+            let damage = Math.floor(base * wMax / 5)
+            let critText = ''
+            if (roll == 6) {
+                const critRoll = rollD4()
+                if (critRoll <= 3) {
+                    damage += 4
+                    critText = `\nКРИТИЧЕСКИЙ УДАР! +4 урона.`
+                }
+            }
+            if (!weaponPierces()) {
+                damage -= 3
+                if (damage < 0) damage = 0
+            }
+            machineHealth -= damage
+            let effectText = ''
+            if (damage > 0 && weaponBleeds()) {
+                bossBleedingStacks += 1
+                bossBleedingTurns = 2
+                effectText = `\nКровотечение! Стаков: ${bossBleedingStacks}.`
+            }
+            if (damage > 0 && weaponStuns()) {
+                if (Math.random() < 0.1) {
+                    bossStunnedTurns += 1
+                    effectText += `\nОГЛУШЕНИЕ! Машинист пропустит ход.`
+                }
+            }
+            if (damage > 0 && weaponWounds()) {
+                playerWoundStacks += 1
+                effectText += `\nРана на игроке! Входящий урон +1.`
+            }
+            alert(`Вы бросаете кубик: ${roll}.\nУрон: ${damage}.` + critText + effectText + `\nHP машиниста: ${machineHealth}`)
+        } else {
+            alert('Машинист: "Долго думаешь. Пар не ждёт."')
+            continue
+        }
+        if (machineHealth <= 0) break
+
+        if (bossBleedingTurns > 0) {
+            const bleedDmg = bossBleedingStacks * 2
+            machineHealth -= bleedDmg
+            bossBleedingTurns -= 1
+            if (bossBleedingTurns == 0) bossBleedingStacks = 0
+            alert(`Кровотечение! Машинист теряет ${bleedDmg} HP.\nHP: ${machineHealth}`)
+        }
+        const regen = getPlayerRegen()
+        if (regen > 0) {
+            health += regen
+            if (health > maxHealth) health = maxHealth
+            alert(`Регенерация: +${regen} HP.\nВаше HP: ${health}`)
+        }
+        machineBonus += 2
+        rounds += 1
+    }
+
+    if (health <= 0) {
+        alert('ПОРАЖЕНИЕ\nМашинист опускает ключ.\n— Ничего личного. Просто котёл должен быть горячим.')
+        dieCount += 1
+        return
+    }
+    if (machineHealth <= 0) {
+        alert('ПОБЕДА\nМашинист падает. Ключ катится по полу.\n— Значит, всё-таки гость... — говорит он тихо.')
+        inventory.push('Разводной ключ')
+        inventory.push('Рукавицы машиниста')
+        inventory.push('Ботинки машиниста')
+        tryEquipWeapon('Разводной ключ')
+        tryEquipArmor('Рукавицы машиниста')
+        tryEquipArmor('Ботинки машиниста')
+        bossDies()
+        const loot = rollLoot()
+        balance += loot
+        alert(`ДОБЫЧА\nКлюч, рукавицы и ботинки. ${loot} монет.\nМакс. HP: ${maxHealth}`)
+        return
+    }
+}
+
+function fightGardener() {
+    gardenerHealth = 60
+    bossBleedingStacks = 0
+    bossBleedingTurns = 0
+    bossStunnedTurns = 0
+    playerWoundStacks = 0
+    rounds = 0
+
+    while (true) {
+        if (gardenerHealth <= 0 || health <= 0) break
+        alert(`РАУНД №${rounds + 1}\nВаше HP: ${health}\nHP садовника: ${gardenerHealth}`)
+
+        if (bossStunnedTurns > 0) {
+            alert('Садовник оглушён и пропускает ход!')
+            bossStunnedTurns -= 1
+        } else {
+            const bossRoll = rollD3()
+            let bossDamage = 0
+            if (bossRoll == 1) bossDamage = 4
+            else if (bossRoll == 2) bossDamage = 6
+            else if (bossRoll == 3) bossDamage = 8
+            if (bossDamage == 0) {
+                alert('Садовник замахивается... и промахивается!')
+            } else {
+                bossDamage += playerWoundStacks
+                bossDamage -= getPlayerArmor()
+                if (bossDamage < 1) bossDamage = 1
+                health -= bossDamage
+                alert(`Садовник бьёт! Урон: ${bossDamage}.\nВаше HP: ${health}`)
+            }
+        }
+        if (health <= 0) break
+
+        const a = +prompt('ВЫБОР ДЕЙСТВИЙ\n1 - Атаковать.')
+        if (a == 1) {
+            const roll = rollD6()
+            let base = 0
+            if (roll == 2) base = 1
+            else if (roll == 3) base = 2
+            else if (roll == 4) base = 3
+            else if (roll == 5) base = 4
+            else if (roll == 6) base = 5
+            const wMax = getWeaponMax()
+            let damage = Math.floor(base * wMax / 5)
+            let critText = ''
+            if (roll == 6) {
+                const critRoll = rollD4()
+                if (critRoll <= 3) {
+                    damage += 4
+                    critText = `\nКРИТИЧЕСКИЙ УДАР! +4 урона.`
+                }
+            }
+            gardenerHealth -= damage
+            let effectText = ''
+            if (damage > 0 && weaponBleeds()) {
+                bossBleedingStacks += 1
+                bossBleedingTurns = 2
+                effectText = `\nКровотечение! Стаков: ${bossBleedingStacks}.`
+            }
+            if (damage > 0 && weaponStuns()) {
+                if (Math.random() < 0.1) {
+                    bossStunnedTurns += 1
+                    effectText += `\nОГЛУШЕНИЕ! Садовник пропустит ход.`
+                }
+            }
+            if (damage > 0 && weaponWounds()) {
+                playerWoundStacks += 1
+                effectText += `\nРана на игроке! Входящий урон +1.`
+            }
+            alert(`Вы бросаете кубик: ${roll}.\nУрон: ${damage}.` + critText + effectText + `\nHP садовника: ${gardenerHealth}`)
+        } else {
+            alert('Садовник: "Ты не торопишься. А сад ждёт."')
+            continue
+        }
+        if (gardenerHealth <= 0) break
+
+        if (bossBleedingTurns > 0) {
+            const bleedDmg = bossBleedingStacks * 2
+            gardenerHealth -= bleedDmg
+            bossBleedingTurns -= 1
+            if (bossBleedingTurns == 0) bossBleedingStacks = 0
+            alert(`Кровотечение! Садовник теряет ${bleedDmg} HP.\nHP: ${gardenerHealth}`)
+        }
+        const regen = getPlayerRegen()
+        if (regen > 0) {
+            health += regen
+            if (health > maxHealth) health = maxHealth
+            alert(`Регенерация: +${regen} HP.\nВаше HP: ${health}`)
+        }
+        rounds += 1
+    }
+
+    if (health <= 0) {
+        alert('ПОРАЖЕНИЕ\nСадовник опускает секатор.\n— Ничего личного. Сад должен расти.')
+        dieCount += 1
+        return
+    }
+    if (gardenerHealth <= 0) {
+        alert('ПОБЕДА\nСадовник падает. Доспех из коры рассыпается.\n— Значит, всё-таки гость...')
+        inventory.push('Секатор королевского садовника')
+        inventory.push('Доспех из коры')
+        inventory.push('Венок из шипов')
+        tryEquipWeapon('Секатор королевского садовника')
+        tryEquipArmor('Доспех из коры')
+        tryEquipArmor('Венок из шипов')
+        bossDies()
+        const loot = rollLoot()
+        balance += loot
+        alert(`ДОБЫЧА\nСекатор, доспех и венок. ${loot} монет.\nМакс. HP: ${maxHealth}`)
+        return
+    }
+}
 function bossFight() {
     while (true) {
         if (health > 0 && bossHealth > 0)
