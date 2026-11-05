@@ -319,7 +319,7 @@ function rollD6() {
     return Math.floor(Math.random() * 6) + 1;
 }
 function fightChief() {
-    chiefHealth = 60
+    chiefHealth = 80
     bossBleedingStacks = 0
     bossBleedingTurns = 0
     bossStunnedTurns = 0
@@ -334,11 +334,12 @@ function fightChief() {
             alert('Повар оглушён и пропускает ход!')
             bossStunnedTurns -= 1
         } else {
-            const bossRoll = rollD3()
+            const bossRoll = rollD4()
             let bossDamage = 0
-            if (bossRoll == 1) bossDamage = 8
-            else if (bossRoll == 2) bossDamage = 12
-            else if (bossRoll == 3) bossDamage = 16
+            if (bossRoll == 1) bossDamage = 14
+            else if (bossRoll == 2) bossDamage = 18
+            else if (bossRoll == 3) bossDamage = 22
+            else bossDamage = 0
             if (bossDamage == 0) {
                 alert('Повар замахивается... и промахивается!')
             } else {
@@ -440,7 +441,7 @@ function fightChief() {
     }
 }
 function fightMachine() {
-    machineHealth = 100
+    machineHealth = 150
     bossBleedingStacks = 0
     bossBleedingTurns = 0
     bossStunnedTurns = 0
@@ -456,11 +457,12 @@ function fightMachine() {
             alert('Машинист оглушён и пропускает ход!')
             bossStunnedTurns -= 1
         } else {
-            const bossRoll = rollD3()
+            const bossRoll = rollD4()
             let bossDamage = 0
-            if (bossRoll == 1) bossDamage = 12
-            else if (bossRoll == 2) bossDamage = 18
-            else if (bossRoll == 3) bossDamage = 24
+            if (bossRoll == 1) bossDamage = 16
+            else if (bossRoll == 2) bossDamage = 24
+            else if (bossRoll == 3) bossDamage = 30
+            else bossDamage = 0
             if (bossDamage == 0) {
                 alert('Машинист замахивается... и промахивается!')
             } else {
@@ -564,7 +566,7 @@ function fightMachine() {
 }
 
 function fightGardener() {
-    gardenerHealth = 110
+    gardenerHealth = 170
     bossBleedingStacks = 0
     bossBleedingTurns = 0
     bossStunnedTurns = 0
@@ -579,11 +581,12 @@ function fightGardener() {
             alert('Садовник оглушён и пропускает ход!')
             bossStunnedTurns -= 1
         } else {
-            const bossRoll = rollD3()
+            const bossRoll = rollD4()
             let bossDamage = 0
-            if (bossRoll == 1) bossDamage = 8
-            else if (bossRoll == 2) bossDamage = 11
-            else if (bossRoll == 3) bossDamage = 14
+            if (bossRoll == 1) bossDamage = 20
+            else if (bossRoll == 2) bossDamage = 26
+            else if (bossRoll == 3) bossDamage = 30
+            else bossDamage = 0
             if (bossDamage == 0) {
                 alert('Садовник замахивается... и промахивается!')
             } else {
@@ -681,7 +684,7 @@ function fightGardener() {
     }
 }
 function fightScientist() {
-    scientistHealth = 90
+    scientistHealth = 80
     bossBleedingStacks = 0
     bossBleedingTurns = 0
     bossStunnedTurns = 0
@@ -696,11 +699,12 @@ function fightScientist() {
             alert('Учёный оглушён и пропускает ход!')
             bossStunnedTurns -= 1
         } else {
-            const bossRoll = rollD3()
+            const bossRoll = rollD4()
             let bossDamage = 0
-            if (bossRoll == 1) bossDamage = 10
-            else if (bossRoll == 2) bossDamage = 14
-            else if (bossRoll == 3) bossDamage = 18
+            if (bossRoll == 1) bossDamage = 25
+            else if (bossRoll == 2) bossDamage = 30
+            else if (bossRoll == 3) bossDamage = 40
+            else bossDamage = 0
             if (bossDamage == 0) {
                 alert('Учёный замахивается... и промахивается!')
             } else {
@@ -803,7 +807,7 @@ function fightScientist() {
 }
 
 function fightWarden() {
-    wardenHealth = 110
+    wardenHealth = 170
     bossBleedingStacks = 0
     bossBleedingTurns = 0
     bossStunnedTurns = 0
@@ -818,11 +822,12 @@ function fightWarden() {
             alert('Надзиратель оглушён и пропускает ход!')
             bossStunnedTurns -= 1
         } else {
-            const bossRoll = rollD3()
+            const bossRoll = rollD4()
             let bossDamage = 0
-            if (bossRoll == 1) bossDamage = 8
-            else if (bossRoll == 2) bossDamage = 10
-            else if (bossRoll == 3) bossDamage = 12
+            if (bossRoll == 1) bossDamage = 10
+            else if (bossRoll == 2) bossDamage = 12
+            else if (bossRoll == 3) bossDamage = 14
+            else bossDamage = 0
             if (bossDamage == 0) {
                 alert('Надзиратель замахивается... и промахивается!')
             } else {
@@ -947,11 +952,12 @@ function fightBoss() {
             alert('Смотритель оглушён и пропускает ход!')
             bossStunnedTurns -= 1
         } else {
-            const bossRoll = rollD3()
+            const bossRoll = rollD4()
             let bossDamage = 0
-            if (bossRoll == 1) bossDamage = 14
-            else if (bossRoll == 2) bossDamage = 20
-            else if (bossRoll == 3) bossDamage = 26
+            if (bossRoll == 1) bossDamage = 20
+            else if (bossRoll == 2) bossDamage = 24
+            else if (bossRoll == 3) bossDamage = 30
+            else bossDamage = 0
             if (bossDamage == 0) {
                 alert('Смотритель замахивается... и промахивается!')
             } else {
