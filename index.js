@@ -14,14 +14,14 @@ let bossHealth = 800
 let bossAttack = 0
 let rounds = 0
 let deathAttempts = 0
-let chiefHealth = 46
-let machineHealth = 100
-let wardenHealth = 90
-let gardenerHealth = 80
-let scientistHealth = 95
+let chiefHealth = 96
+let machineHealth = 180
+let wardenHealth = 190
+let gardenerHealth = 210
+let scientistHealth = 150
 let bossHasAssistant = 0
 let negativeBalanceHappened = 0
-let maxHealth = 50
+let maxHealth = 100
 let equippedWeapon = 'Деревянный меч'
 let equippedHelmet = 'Кожаный шлем'
 let equippedChest = 'Кожаный нагрудник'
@@ -46,20 +46,20 @@ function rollLoot() {
 
 function getPlayerArmor() {
     let armor = 0
-    if (equippedHelmet == 'Кожаный шлем') armor += 1
-    if (equippedHelmet == 'Колпак повара') armor += 2
-    if (equippedHelmet == 'Каска машиниста') armor += 2
-    if (equippedHelmet == 'Медный шлем с проводами') armor += 2
-    if (equippedHelmet == 'Венок из шипов') armor += 1
-    if (equippedChest == 'Кожаный нагрудник') armor += 1
-    if (equippedChest == 'Фартук повара') armor += 2
-    if (equippedChest == 'Кожаный фартук машиниста') armor += 3
-    if (equippedChest == 'Доспех из коры') armor += 4
-    if (equippedChest == 'Резиновый халат') armor += 3
-    if (equippedLegs == 'Кожаные штаны') armor += 1
-    if (equippedFeet == 'Кожаные сапоги') armor += 1
-    if (equippedFeet == 'Ботинки машиниста') armor += 2
-    if (equippedHands == 'Рукавицы машиниста') armor += 2
+    if (equippedHelmet == 'Кожаный шлем') armor += 3
+    if (equippedHelmet == 'Колпак повара') armor += 4
+    if (equippedHelmet == 'Каска машиниста') armor += 4
+    if (equippedHelmet == 'Медный шлем с проводами') armor += 3
+    if (equippedHelmet == 'Венок из шипов') armor += 2
+    if (equippedChest == 'Кожаный нагрудник') armor += 2
+    if (equippedChest == 'Фартук повара') armor += 4
+    if (equippedChest == 'Кожаный фартук машиниста') armor += 5
+    if (equippedChest == 'Доспех из коры') armor += 5
+    if (equippedChest == 'Резиновый халат') armor += 6
+    if (equippedLegs == 'Кожаные штаны') armor += 2
+    if (equippedFeet == 'Кожаные сапоги') armor += 2
+    if (equippedFeet == 'Ботинки машиниста') armor += 3
+    if (equippedHands == 'Рукавицы машиниста') armor += 1
     return armor
 }
 
@@ -159,7 +159,7 @@ function rollD6() {
     return Math.floor(Math.random() * 6) + 1;
 }
 function fightChief() {
-    chiefHealth = 26
+    chiefHealth = 96
     bossBleedingStacks = 0
     bossBleedingTurns = 0
     bossStunnedTurns = 0
@@ -176,9 +176,9 @@ function fightChief() {
         } else {
             const bossRoll = rollD3()
             let bossDamage = 0
-            if (bossRoll == 1) bossDamage = 4
-            else if (bossRoll == 2) bossDamage = 6
-            else if (bossRoll == 3) bossDamage = 8
+            if (bossRoll == 1) bossDamage = 12
+            else if (bossRoll == 2) bossDamage = 16
+            else if (bossRoll == 3) bossDamage = 20
             if (bossDamage == 0) {
                 alert('Повар замахивается... и промахивается!')
             } else {
@@ -277,7 +277,7 @@ function fightChief() {
     }
 }
 function fightMachine() {
-    machineHealth = 80
+    machineHealth = 180
     bossBleedingStacks = 0
     bossBleedingTurns = 0
     bossStunnedTurns = 0
@@ -295,9 +295,9 @@ function fightMachine() {
         } else {
             const bossRoll = rollD3()
             let bossDamage = 0
-            if (bossRoll == 1) bossDamage = 4
-            else if (bossRoll == 2) bossDamage = 6
-            else if (bossRoll == 3) bossDamage = 8
+            if (bossRoll == 1) bossDamage = 16
+            else if (bossRoll == 2) bossDamage = 22
+            else if (bossRoll == 3) bossDamage = 28
             if (bossDamage == 0) {
                 alert('Машинист замахивается... и промахивается!')
             } else {
@@ -398,7 +398,7 @@ function fightMachine() {
 }
 
 function fightGardener() {
-    gardenerHealth = 60
+    gardenerHealth = 210
     bossBleedingStacks = 0
     bossBleedingTurns = 0
     bossStunnedTurns = 0
@@ -415,9 +415,9 @@ function fightGardener() {
         } else {
             const bossRoll = rollD3()
             let bossDamage = 0
-            if (bossRoll == 1) bossDamage = 4
-            else if (bossRoll == 2) bossDamage = 6
-            else if (bossRoll == 3) bossDamage = 8
+            if (bossRoll == 1) bossDamage = 10
+            else if (bossRoll == 2) bossDamage = 13
+            else if (bossRoll == 3) bossDamage = 16
             if (bossDamage == 0) {
                 alert('Садовник замахивается... и промахивается!')
             } else {
@@ -512,7 +512,7 @@ function fightGardener() {
     }
 }
 function fightScientist() {
-    scientistHealth = 75
+    scientistHealth = 150
     bossBleedingStacks = 0
     bossBleedingTurns = 0
     bossStunnedTurns = 0
@@ -529,9 +529,9 @@ function fightScientist() {
         } else {
             const bossRoll = rollD3()
             let bossDamage = 0
-            if (bossRoll == 1) bossDamage = 4
-            else if (bossRoll == 2) bossDamage = 6
-            else if (bossRoll == 3) bossDamage = 8
+            if (bossRoll == 1) bossDamage = 13
+            else if (bossRoll == 2) bossDamage = 17
+            else if (bossRoll == 3) bossDamage = 22
             if (bossDamage == 0) {
                 alert('Учёный замахивается... и промахивается!')
             } else {
@@ -631,7 +631,7 @@ function fightScientist() {
 }
 
 function fightWarden() {
-    wardenHealth = 70
+    wardenHealth = 190
     bossBleedingStacks = 0
     bossBleedingTurns = 0
     bossStunnedTurns = 0
@@ -648,9 +648,9 @@ function fightWarden() {
         } else {
             const bossRoll = rollD3()
             let bossDamage = 0
-            if (bossRoll == 1) bossDamage = 4
-            else if (bossRoll == 2) bossDamage = 6
-            else if (bossRoll == 3) bossDamage = 8
+            if (bossRoll == 1) bossDamage = 12
+            else if (bossRoll == 2) bossDamage = 14
+            else if (bossRoll == 3) bossDamage = 16
             if (bossDamage == 0) {
                 alert('Надзиратель замахивается... и промахивается!')
             } else {
@@ -743,7 +743,7 @@ function fightWarden() {
 }
 
 function fightBoss() {
-    bossHealth = 120
+    bossHealth = 800
     bossBleedingStacks = 0
     bossBleedingTurns = 0
     bossStunnedTurns = 0
@@ -774,9 +774,9 @@ function fightBoss() {
         } else {
             const bossRoll = rollD3()
             let bossDamage = 0
-            if (bossRoll == 1) bossDamage = 4
-            else if (bossRoll == 2) bossDamage = 6
-            else if (bossRoll == 3) bossDamage = 8
+            if (bossRoll == 1) bossDamage = 20
+            else if (bossRoll == 2) bossDamage = 26
+            else if (bossRoll == 3) bossDamage = 32
             if (bossDamage == 0) {
                 alert('Смотритель замахивается... и промахивается!')
             } else {
